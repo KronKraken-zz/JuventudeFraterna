@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+        <title>Juventude Fraterna | Home</title>
+
+        <script src="assets/webcomponentsjs/webcomponents.min.js"></script>
+
+        <link rel="import" href="assets/elements/jf-page.html">
+        <link rel="import" href="assets/paper-styles/color.html">
+        <link rel="import" href="assets/paper-styles/typography.html">
+
+        <style is="custom-style">
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            h1 {
+                @apply(--paper-font-display2);
+                margin-bottom: 0;
+            }
+
+            h4 {
+                @apply(--paper-font-title);
+                margin-top: 10px;
+            }
+
+            p {
+                @apply(--paper-body1);
+            }
+        </style>
+    </head>
+    <body>
+        <template is="dom-bind">
+            <jf-page title="Juventude Fraterna" description="(Insira algum texto sobre o Capítulo)">
+
+            </jf-page>
+        </template>
+        <script type="text/javascript">
+            (function($) {
+
+            })(document.querySelector("template[is=dom-bind]"));
+        </script>
+    </body>
+</html>

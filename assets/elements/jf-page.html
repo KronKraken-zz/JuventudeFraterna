@@ -1,0 +1,114 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../app-layout/app-header/app-header.html">
+<link rel="import" href="../app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../paper-styles/color.html">
+<link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<dom-module is="jf-page">
+    <template>
+        <style is="custom-style">
+            :host {
+                --primary-color: var(--paper-red-500);
+                --secondary-color: #fff;
+                margin: 0;
+            }
+
+            h1.page-title {
+                @apply(--paper-font-display2);
+                margin-bottom: 0;
+            }
+
+            h4.page-description {
+                @apply(--paper-font-title);
+                margin-top: 10px;
+            }
+
+            p {
+                @apply(--paper-body1);
+            }
+
+            app-header {
+                @apply(--paper-font-headline);
+                background: var(--primary-color);
+                color: var(--secondary-color);
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 200px;
+                --app-header-background-front-layer: {
+                    background-image: url(../img/bg.jpg);
+                    background-position: center;
+                };
+            }
+
+            app-toolbar.tall {
+                height: 150px;
+            }
+
+            .content {
+                margin: 0 30px;
+            }
+
+            [main-title],[condensed-title] {
+                margin-left: 10px;
+                font-size: 60px;
+                font-weight: 300;
+            }
+
+            [condensed-title] {
+                font-size: 30px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        </style>
+
+        <div>
+            <app-drawer-layout class="fullbleed" unresolved>
+                <app-drawer hidden>
+                    content!
+                </app-drawer>
+                <app-header-layout>
+                     <app-header condenses reveals effects="waterfall resize-title blend-background parallax-background">
+                        <app-toolbar>
+                            <paper-icon-button icon="menu"></paper-icon-button>
+                            <h4 condensed-title>Juventude Fraterna</h4>
+                            <paper-icon-button icon=""></paper-icon-button>
+                        </app-toolbar>
+                        <app-toolbar class="tall">
+                            <h1 main-title>Juventude Fraterna</h1>
+                        </app-toolbar>
+                     </app-header>
+                     <div class="content">
+                        <h1 class="page-title">{{title}}</h1>
+                        <h4 class="page-description">{{description}}</h4>
+                        <content></content>
+                     </div>
+               </app-header-layout>
+            </app-drawer-layout>
+        </div>
+    </template>
+    <script type="text/javascript">
+        Polymer({
+            is: "jf-page",
+            properties: {
+                title: {
+                    type: String,
+                    value: "Título"
+                },
+
+                description: {
+                    type: String,
+                    value: "Descrição"
+                }
+            }
+        });
+    </script>
+</dom-module>
