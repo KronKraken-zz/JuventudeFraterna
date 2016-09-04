@@ -1,0 +1,22 @@
+{
+  "name": "juventude-fraterna",
+  "description": "Site para meu capítulo DeMolay.",
+  "main": "app.js",
+  "authors": [
+    "Miguel \"KronKraken\" Buzato"
+  ],
+  "license": "SEE LICENSE IN LICENSE.md",
+  "homepage": "https://github.com/KronKraken/JuventudeFraterna",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "iron-elements": "PolymerElements/iron-elements#^1.0.10",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7",
+    "polymer": "Polymer/polymer#^1.6.1"
+  }
+}

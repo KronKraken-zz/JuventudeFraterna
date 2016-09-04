@@ -1,0 +1,24 @@
+{
+  "name": "juventude-fraterna",
+  "version": "1.0.0",
+  "description": "Site para meu capítulo DeMolay.",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "hogan-cached": "^1.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KronKraken/JuventudeFraterna.git"
+  },
+  "author": "Miguel \"KronKraken\" Buzato",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/KronKraken/JuventudeFraterna/issues"
+  },
+  "homepage": "https://github.com/KronKraken/JuventudeFraterna#readme"
+}
