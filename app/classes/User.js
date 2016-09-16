@@ -2,36 +2,47 @@
 
 let Request = load("#request");
 let Parser = load("app.utils.Parser");
+let Database = load("app.managers.Database");
+let Crypto = load("#crypto");
+
 class User {
 
     static login(id, password) {
-        //IMPORTANT:0 Replace login system to use SISDM only upon first login and store information in Database.
+        let encrypted_password = Crypto.createHash("sha256").update(password).digest("hex");
         return new Promise((pRes, pRej) => {
-            Request.post("https://sis.demolaybrasil.org.br/incs/login.php", {headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: "login=" + id + "&senha=" + password}, (err, res, body) => {
-                if(err || !body || body.indexOf("estatus") == -1) {
-                    pRej("Um erro ocorreu ao tentar se conectar com o SISDM. Por favor, tente novamente mais tarde.");
-                } else if(body.indexOf("ok") == -1) {
-                    pRej("Usuário ou senha inválido.");
-                } else {
-                    if(res.headers && res.headers.hasOwnProperty("set-cookie")) {
-                        let cookie = res.headers["set-cookie"][0];
-                        cookie = cookie.replace("PHPSESSID=", "").replace("; path=/", "");
-                        Request.get("https://sis.demolaybrasil.org.br/", {headers: {"Cookie": "PHPSESSID=" + cookie}}, (err, res, body) => {
-                            if(err || !body) {
-                                pRej();
+            Database.query("SELECT * FROM users WHERE id=? AND password=?;", [id, encrypted_password]).then((users) => {
+                if(users == null) {
+                    Request.post("https://sis.demolaybrasil.org.br/incs/login.php", {headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: "login=" + id + "&senha=" + password}, (err, res, body) => {
+                        if(err || !body || body.indexOf("estatus") == -1) {
+                            pRej("Um erro ocorreu ao tentar se conectar com o SISDM. Por favor, tente novamente mais tarde.");
+                        } else if(body.indexOf("ok") == -1) {
+                            pRej("Usuário ou senha inválido.");
+                        } else {
+                            if(res.headers && res.headers.hasOwnProperty("set-cookie")) {
+                                let cookie = res.headers["set-cookie"][0];
+                                cookie = cookie.replace("PHPSESSID=", "").replace("; path=/", "");
+                                Request.get("https://sis.demolaybrasil.org.br/", {headers: {"Cookie": "PHPSESSID=" + cookie}}, (err, res, body) => {
+                                    if(err || !body) {
+                                        pRej();
+                                    } else {
+                                        let $ = Parser.parse(body);
+                                        let name = $[0].children[1].children[0].children[8].children[1].children[1].children[0].content;
+                                        let pic = "https://sis.demolaybrasil.org.br/" + $[0].children[1].children[0].children[4].children[0].attr.src;
+                                        let user = new User({name: name, id: id, pic: pic, login_date: new Date()});
+                                        Database.query("INSERT INTO users VALUES (?,?,?,?,?)", [id, name, 0, encrypted_password, pic]);
+                                        pRes(user);
+                                    }
+                                });
                             } else {
-                                let $ = Parser.parse(body);
-                                let name = $[0].children[1].children[0].children[8].children[1].children[1].children[0].content;
-                                let pic = "https://sis.demolaybrasil.org.br/" + $[0].children[1].children[0].children[4].children[0].attr.src;
-                                let user = new User({name: name, id: id, pic_url: pic, session: cookie, session_date: new Date()});
-                                pRes(user);
+                                pRej("Um erro ocorreu ao tentar se conectar com o SISDM. Por favor, tente novamente mais tarde.");
                             }
-                        });
-                    } else {
-                        pRej("Um erro ocorreu ao tentar se conectar com o SISDM. Por favor, tente novamente mais tarde.");
-                    }
+                        }
+                    });
+                } else {
+                    let user = users[0];
+                    pRes(new User({name: user.name, id: user.id, pic: user.picture, login_date: new Date()}));
                 }
-            });
+            }).catch(pRej);
         });
     }
 
@@ -39,12 +50,8 @@ class User {
         this._data = data;
     }
 
-    getAuth() {
-        return this._data.session;
-    }
-
     getLoginDate() {
-        return this._data.session_date;
+        return this._data.login_date;
     }
 
     getID() {
@@ -60,7 +67,7 @@ class User {
     }
 
     getPicture() {
-        return this._data.pic_url;
+        return this._data.pic;
     }
 
 }

@@ -7,17 +7,17 @@ class Database {
     static connect(options) {
         return new Promise((end) => {
             global.db_conn = MySQL.createConnection(options);
-            global.db_conn.connect();
-            end();
+            global.db_conn.connect(end);
+            Database.conn = global.db_conn;
         });
     }
 
     static query(sql, args) {
         return new Promise((pRes, pRej) => {
             if(Database.conn != null) {
-                Database.conn.query(sql, args, (err, res) => {
+                let a = Database.conn.query(sql, args, (err, res) => {
                     if(err || !res) {
-                        pRej(err.toString());
+                        pRej("Ocorreu um erro ao entrar em contato com a database. Código: " + err.code);
                     } else {
                         if(res.length == 0) {
                             pRes(null);
@@ -33,7 +33,5 @@ class Database {
     }
 
 }
-
-Database.conn = global.db_conn;
 
 module.exports = Database;

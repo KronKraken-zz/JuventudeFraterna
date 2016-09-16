@@ -71,10 +71,16 @@ new MainRouter().register(app);
 
 Database.connect({
     host: "localhost",
+    port: 3306,
     user: "root",
     password: "",
     database: "demolay"
-}).then(() => {
-    app.listen(2000, "192.168.1.31");
+}).then((err) => {
+    if(err) {
+        console.log(err.code);
+        process.exit(-1);
+    } else {
+        app.listen(2000, "192.168.1.31");
+    }
 });
 //module.exports = app;
