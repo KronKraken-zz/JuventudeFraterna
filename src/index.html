@@ -8,11 +8,18 @@
 
         <title>Juventude Fraterna | Home</title>
 
-        <script src="assets/webcomponentsjs/webcomponents.min.js"></script>
+        <script src="../bower_components/webcomponentsjs/webcomponents.min.js"></script>
 
-        <link rel="import" href="assets/elements/jf-page.html">
-        <link rel="import" href="assets/paper-styles/color.html">
-        <link rel="import" href="assets/paper-styles/typography.html">
+        <link rel="import" href="../assets/elements/jf-page.html">
+        <link rel="import" href="../bower_components/paper-styles/color.html">
+        <link rel="import" href="../bower_components/paper-styles/typography.html">
+
+        <link rel="import" href="../bower_components/paper-card/paper-card.html">
+        <link rel="import" href="../bower_components/paper-button/paper-button.html">
+        <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+        <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+        <link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
+        <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
 
         <style is="custom-style">
             body {
@@ -34,11 +41,60 @@
                 @apply(--paper-body1);
             }
         </style>
+        <style is="custom-style">
+            paper-card.blog-post {
+                width: 100%;
+                --paper-card-content: {
+                    @apply(--paper-font-subhead);
+                    padding-top: 4px;
+                }
+
+                --paper-card-header-text: {
+                    padding: 16px 16px 4px 16px;
+                }
+
+                --paper-card-actions: {
+                    padding: 5px;
+                }
+            }
+
+            paper-dialog.blog-post-content {
+                width: 90%;
+                height: auto;
+            }
+
+            paper-card.blog-post paper-button {
+                margin: 0 0 5px 0;
+                float: right;
+                @apply(--paper-font-body1);
+            }
+        </style>
     </head>
     <body>
         <template is="dom-bind">
-            <jf-page title="Juventude Fraterna" description="(Insira algum texto sobre o Capítulo)">
+            <jf-page title="Blog" description="As ultimas notícias de nosso Capítulo!">
+                <template is="dom-repeat" items='[{"title": "Post 01", "description": "Post 01 Description", "content": "Post 01 Content"}, {"title": "Post 01", "description": "Post 01 Description", "content": "Post 01 Content"}, {"title": "Post 01", "description": "Post 01 Description", "content": "Post 01 Content"}, {"title": "Post 01", "description": "Post 01 Description", "content": "Post 01 Content"}, {"title": "Post 01", "description": "Post 01 Description", "content": "Post 01 Content"}]'>
+                    <paper-card heading="{{item.title}}" elevation="2" class="blog-post">
+                        <div class="card-content">
+                            {{item.description}}
+                        </div>
+                        <div class="card-actions">
+                            <paper-button onclick$="document.querySelector('#post_content_{{item.pid}}').open();">Ler mais...</paper-button>
+                        </div>
+                    </paper-card>
 
+                    <paper-dialog id$="post_content_{{item.pid}}" modal entry-animation="scale-up-animation" exit-animation="fade-out-animation" class="blog-post-content">
+                        <h2>{{item.title}}</h2>
+                        <paper-dialog-scrollable>
+                            {{item.content}}
+                        </paper-dialog-scrollable>
+                        <div class="buttons">
+                            <paper-button dialog-dismiss>Fechar</paper-button>
+                        </div>
+                    </paper-dialog>
+
+                    <br><br>
+                </template>
             </jf-page>
         </template>
         <script type="text/javascript">

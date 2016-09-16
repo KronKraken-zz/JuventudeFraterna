@@ -1,11 +1,36 @@
 "use strict";
 
+// Better looking require
+global.path = require("path");
+global.load = (p) => {
+    let isGlobal = p.startsWith("#");
+    if(isGlobal) {
+        p = p.substring(1);
+    } else {
+        p = p.replace(/[.]/g, "/");
+    }
+    return require(isGlobal ? p : path.resolve(__dirname + "/" + p + ".js"));
+};
+
 // Node Natives
-let Path = require("path");
+let Path = load("#path");
 
 // Installed
-let Express = require("express");
-let Hogan = require("hogan-cached");
+let Express = load("#express");
+let Hogan = load("#hogan-cached");
+
+let Cors = require("cors");
+let Cookies = load("#cookie-parser");
+let BodyParser = load("#body-parser");
+
+// Local
+let User = load("app.classes.User");
+let Session = load("app.managers.Session");
+let Database = load("app.managers.Database");
+
+// Routers
+let MainRouter = load("app.routers.MainRouter");
+let LoginRouter = load("app.routers.LoginRouter");
 
 // Variables
 let app = new Express();
@@ -15,16 +40,41 @@ app.engine("html", Hogan);
 app.set("hogan cache", false); // Remove before production
 app.set("hogan options", {delimiters: "{?-- --?}"});
 app.set("view engine", "html");
-app.set("views", Path.resolve(__dirname + "/src"));
+app.set("views", Path.resolve(__dirname + "/out"));
 
+app.use(Cors());
+app.use(BodyParser.json());
+app.use(Cookies());
 
-// Express paths
-app.use("/assets", Express.static(Path.resolve(__dirname + "/bower_components")));
-app.use("/assets", Express.static(Path.resolve(__dirname + "/assets")));
+// Sessions
+app.use((req, res, next) => {
+    let id = req.cookies.session;
+    if(id != null) {
+        let sess = Session.getSession(id);
+        if(sess != null) {
+            req.user = sess;
+        } else {
+            req.user = null;
+        }
+    } else {
+        req.user = null;
+    }
 
-app.get("/", (req, res) => {
-    res.render("index");
+    next();
 });
 
-app.listen(80);
+// Express paths
+app.use("/assets", Express.static(Path.resolve(__dirname + "/assets")));
+
+new LoginRouter().register(app);
+new MainRouter().register(app);
+
+Database.connect({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "demolay"
+}).then(() => {
+    app.listen(2000, "192.168.1.31");
+});
 //module.exports = app;

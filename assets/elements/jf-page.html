@@ -1,15 +1,27 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../app-layout/app-drawer-layout/app-drawer-layout.html">
-<link rel="import" href="../app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../app-layout/app-header/app-header.html">
-<link rel="import" href="../app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../paper-styles/color.html">
-<link rel="import" href="../paper-styles/typography.html">
-<link rel="import" href="../app-layout/app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../iron-icon/iron-icon.html">
-<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-from-top-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-up-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-down-animation.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
 <dom-module is="jf-page">
     <template>
@@ -68,19 +80,93 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
+
+            paper-button.login-button:not([disabled]) {
+                color: var(--paper-green-500);
+            }
+
+            #modal_login {
+                width: 40%;
+            }
+
+            #modal_login paper-input {
+                margin-top: 0;
+            }
+
+            #modal_login .buttons paper-spinner-lite {
+                --paper-spinner-color: var(--paper-red-500);
+                position: absolute;
+                left: 0;
+                margin: 3px 0 0 25px;
+            }
+
+            #login_success .modal-content {
+                font-size: 16px;
+                text-align: center;
+            }
+
+            .modal-content h1,p {
+                margin-bottom: 0;
+            }
+
+            .red {
+                color: var(--paper-red-500);
+            }
+
+            .capitalize {
+                text-transform: capitalize;
+            }
+
+            paper-material.profile-pic {
+                width: 110px;
+                margin: 30px auto 20px auto;
+            }
+
+            paper-material.profile-pic, paper-material.profile-pic img,.circle {
+                border-radius: 50%;
+            }
+
+            .profile-info img {
+                float: left;
+                margin-right: 15px;
+            }
+
+            .profile-info p {
+                margin-top: 0;
+                float: right;
+                line-height: 50px;
+            }
+
+            .profile-info div {
+                float: left;
+            }
+
+            .profile-info paper-icon-button {
+                margin: 5px 0 0 5px;
+                float: right;
+            }
         </style>
 
         <div>
-            <app-drawer-layout class="fullbleed" unresolved>
-                <app-drawer hidden>
+            <app-drawer-layout force-narrow>
+                <app-drawer no-focus-trap swipe-open>
                     content!
                 </app-drawer>
                 <app-header-layout>
                      <app-header condenses reveals effects="waterfall resize-title blend-background parallax-background">
                         <app-toolbar>
-                            <paper-icon-button icon="menu"></paper-icon-button>
+                            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                             <h4 condensed-title>Juventude Fraterna</h4>
-                            <paper-icon-button icon=""></paper-icon-button>
+                            <div hidden="{{user_exists}}">
+                                <paper-icon-button icon="fingerprint" title="Login" on-tap="open_login" id="login_button"></paper-icon-button>
+                            </div>
+                            <div hidden="{{!user_exists}}" class="profile-info">
+                                <div>
+                                    <img width="50" height="50" class="circle" src="{{user.pic}}">
+                                    <p class="capitalize">{{user.name}}</p>
+                                </div>
+                                <paper-icon-button icon="settings" title="Opções" id="options_button"></paper-icon-button>
+                            </div>
                         </app-toolbar>
                         <app-toolbar class="tall">
                             <h1 main-title>Juventude Fraterna</h1>
@@ -93,8 +179,54 @@
                      </div>
                </app-header-layout>
             </app-drawer-layout>
+            <paper-dialog modal id="modal_login">
+                <div class="modal-content">
+                    <h1>Login</h1>
+                    <p>
+                        Use suas informações do SISDM para logar.<br>
+                        <span class="red">{{login_error}}</span>
+                    </p>
+                    <paper-input id="login_id" label="ID" char-counter maxlength="6" required auto-validate allowed-pattern="[0-9]" error-message="ID inválido!" value="{{login_id}}"></paper-input>
+                    <paper-input id="login_password" label="Senha" type="password" required error-message="Senha inválida!" value="{{login_password}}"></paper-input>
+                    <br>
+                </div>
+                <div class="buttons">
+                    <paper-spinner-lite id="login_loading"></paper-spinner-lite>
+                    <paper-button dialog-dismiss id="login_btn_cancel">Cancel</paper-button>
+                    <paper-button class="login-button" on-tap="validate" id="login_btn_login">Login</paper-button>
+                </div>
+            </paper-dialog>
+
+            <paper-dialog modal id="login_success">
+                <h1>Login</h1>
+                <div class="modal-content">
+                    <paper-material class="profile-pic" elevation="2">
+                        <img width="100px" height="100px" src="{{user.pic}}">
+                    </paper-material>
+                    <p>
+                        Sucesso! Bem-vindo, <b class="capitalize">{{user.name}}</b>!<br>
+                    </p>
+                </div>
+                <div class="buttons">
+                    <paper-button dialog-dismiss>Fechar</paper-button>
+                </div>
+            </paper-dialog>
         </div>
+        <iron-ajax id="login" url="http://192.168.1.31:2000/login" method="POST" content-type="application/json" body$='{"id": "{{login_id}}", "password": "{{login_password}}"}' handle-as="json" on-response="login"></iron-ajax>
     </template>
+    {?--#user--?}
+    <script text="text/javascript">
+        var user = {
+            name: "{?--user.name--?}",
+            pic: "{?--user.pic--?}"
+        };
+    </script>
+    {?--/user--?}
+    {?--^user--?}
+    <script text="text/javascript">
+        var user = null;
+    </script>
+    {?--/user--?}
     <script type="text/javascript">
         Polymer({
             is: "jf-page",
@@ -108,6 +240,95 @@
                     type: String,
                     value: "Descrição"
                 }
+            },
+
+            animations: {
+                login: {
+                    default: function(n) {
+                        return {
+                            "entry": [
+                                {name: "slide-from-top-animation", node: this, timing: {delay: 100}},
+                                {name: "fade-in-animation", node: this, timing: {delay: 125}}
+                            ],
+
+                            "exit": [
+                                {name: "slide-up-animation", node: this},
+                                {name: "fade-out-animation", node: this, timing: {delay: 25}}
+                            ]
+                        }[n];
+                    },
+
+                    success: function(n) {
+                        return {
+                            "entry": [
+                                {name: "slide-from-top-animation", node: this, timing: {delay: 100}},
+                                {name: "fade-in-animation", node: this, timing: {delay: 125}}
+                            ],
+
+                            "exit": [
+                                {name: "scale-down-animation", node: this}
+                            ]
+                        }[n];
+                    }
+                }
+            },
+
+            listeners: {
+                "validate": "validate"
+            },
+
+            ready: function() {
+                this.user_exists = false;
+                if(user != null) {
+                    this.load_user(user);
+                }
+
+                this.$.modal_login.getAnimationConfig = this.animations.login.default;
+                this.$.login_success.getAnimationConfig = this.animations.login.default;
+            },
+
+            disable: function(b) {
+                this.$.login_id.disabled = b;
+                this.$.login_password.disabled = b;
+                this.$.login_btn_login.disabled = b;
+                this.$.login_btn_cancel.disabled = b;
+                this.$.login_loading.active = b;
+            },
+
+            open_login: function() {
+                this.$.modal_login.getAnimationConfig = this.animations.login.default;
+                this.$.modal_login.open();
+            },
+
+            validate: function() {
+                this.login_error = "";
+                if(this.$.login_id.validate() && this.$.login_password.validate()) {
+                    this.$.login.generateRequest();
+                    this.disable(true);
+                } else {
+                    this.login_error = "O ID e Senha são necessários antes de logar.";
+                }
+            },
+
+            login: function(data) {
+                data = data.detail.response;
+                if(data.hasOwnProperty("error")) {
+                    this.login_error = data.error;
+                    this.disable(false);
+                } else {
+                    this.load_user(data.user);
+                    var d = new Date();
+                    d.setDate(d.getDate() + 1);
+                    document.cookie = "session=" + data.id + "; expires=" + d.toUTCString() + ";";
+                    this.$.modal_login.getAnimationConfig = this.animations.login.success;
+                    this.$.modal_login.close();
+                    this.$.login_success.open();
+                }
+            },
+
+            load_user: function(u) {
+                this.user_exists = true;
+                this.user = u;
             }
         });
     </script>
