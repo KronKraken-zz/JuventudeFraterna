@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+        <title>Juventude Fraterna | Home</title>
+
+        <script src="../bower_components/webcomponentsjs/webcomponents.min.js"></script>
+
+        <link rel="import" href="../assets/elements/jf-page.html">
+        <link rel="import" href="../bower_components/paper-styles/color.html">
+        <link rel="import" href="../bower_components/paper-styles/typography.html">
+
+        <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+        <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+        <style is="custom-style">
+            body {
+                padding: 0;
+                margin: 0;
+                min-width: 360px;
+                overflow-x: hidden;
+                font-family: "Roboto", sans-serif;
+            }
+
+            h1 {
+                @apply(--paper-font-display2);
+                margin-bottom: 0;
+            }
+
+            h4 {
+                @apply(--paper-font-title);
+                margin-top: 10px;
+            }
+
+            p {
+                @apply(--paper-body1);
+            }
+        </style>
+        <style is="custom-style">
+            .error {
+                text-align: center;
+                color: #ddd;
+            }
+
+            .error h1 {
+                margin: 0 0 20px 0;
+                font-size: 3rem;
+                font-weight: 900;
+            }
+
+            .error iron-icon {
+                width: 15rem;
+                height: 15rem;
+            }
+        </style>
+    </head>
+    <body>
+        <template is="dom-bind">
+            <jf-page title="" description="">
+                <div hidden="{{is_loaded}}" class="error">
+                    <br>
+                    <iron-icon icon="clear"></iron-icon>
+                    <h1 id="error">{?--error--?}</h1>
+                    <br>
+                </div>
+            </jf-page>
+        </template>
+    </body>
+</html>

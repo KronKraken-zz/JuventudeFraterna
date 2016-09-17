@@ -22,16 +22,29 @@ class MainRouter extends Router {
 
                 let check = () => {
                     if(ps.length >= posts.length) {
-                        res.success({posts: ps});
+                        res.success(ps);
                     }
                 };
 
                 posts.forEach((post) => {
                     post.getAuthor().then((user) => {
-                        ps.push({id: post.getID(), title: post.getTitle(), description: post.getDescription(), image: post.getImage(), author: {name: user.getName(), permission: user.getPermission()}, date: post.getDate().getTime()});
+                        ps.push({id: post.getID(), title: post.getTitle(), description: post.getDescription(), author: user.getName(), date: post.getDate().getTime()});
                         check();
                     }).catch(res.error);
                 });
+            }).catch(res.error);
+        });
+
+        this.router.get("/post/:id", (req, res) => {
+            let id = Number(req.params.id);
+            Post.getByID(id).then((post) => {
+                if(post == null) {
+                    res.error("Página não encontrada.");
+                } else {
+                    post.getAuthor().then((user) => {
+                        res.success({id: post.getID(), title: post.getTitle(), description: post.getDescription(), author: user.getName(), date: post.getDate().getTime(), content: post.getContent()});
+                    }).catch(res.error);
+                }
             }).catch(res.error);
         });
     }

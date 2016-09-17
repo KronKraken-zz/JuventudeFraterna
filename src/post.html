@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+        <title>Juventude Fraterna | Home</title>
+
+        <script src="../bower_components/webcomponentsjs/webcomponents.min.js"></script>
+
+        <link rel="import" href="../assets/elements/jf-page.html">
+        <link rel="import" href="../bower_components/paper-styles/color.html">
+        <link rel="import" href="../bower_components/paper-styles/typography.html">
+
+        <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+        <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+        <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+        <link rel="import" href="../bower_components/marked-element/marked-element.html">
+
+        <style is="custom-style">
+            body {
+                padding: 0;
+                margin: 0;
+                min-width: 360px;
+                overflow-x: hidden;
+                font-family: "Roboto", sans-serif;
+            }
+
+            h1 {
+                @apply(--paper-font-display2);
+                margin-bottom: 0;
+            }
+
+            h4 {
+                @apply(--paper-font-title);
+                margin-top: 10px;
+            }
+
+            p {
+                @apply(--paper-body1);
+            }
+        </style>
+        <style is="custom-style">
+            .no-posts {
+                text-align: center;
+                color: #ddd;
+            }
+
+            .no-posts h1 {
+                margin: 0 0 20px 0;
+                font-size: 3rem;
+                font-weight: 900;
+            }
+
+            .no-posts iron-icon {
+                width: 15rem;
+                height: 15rem;
+            }
+
+            .separator {
+                border-top: 1px solid #e8e8e8;
+                margin: 30px 0;
+                padding-top: 10px;
+            }
+
+            .information {
+                font-size: 16px;
+                font-weight: 300;
+                color: #ddd;
+                float: right;
+            }
+
+            .capitalize {
+                text-transform: capitalize;
+            }
+        </style>
+    </head>
+    <body>
+        <template is="dom-bind">
+            <jf-page title="{{post.title}}" description="{{post.description}}" id="page">
+                <div hidden="{{is_loaded}}" class="no-posts">
+                    <br>
+                    <iron-icon icon="clear"></iron-icon>
+                    <h1 id="error">Parece que não tem nada aqui!</h1>
+                    <br>
+                </div>
+                <div hidden="{{!is_loaded}}">
+                    <div class="separator">
+                    <span class="information">
+                        por <span class="capitalize">{{post.author}}</span> em {{post.date}}</span>
+                    </div>
+                    <marked-element markdown="{{post.content}}">
+                        <div class="markdown-html"></div>
+                    </marked-element>
+                </div>
+            </jf-page>
+            <iron-ajax auto id="ajax" url="http://192.168.1.34:2001/blog/post/{?--id--?}" handle-as="json" on-response="loaded"></iron-ajax>
+        </template>
+        <script type="text/javascript">
+            (function($) {
+                $.ready = function() {
+                    this.is_loaded = false;
+                    this.post = {
+                        title: "Carregando...",
+                        description: ""
+                    };
+                };
+
+                $.loaded = function(data) {
+                    data = data.detail.response;
+                    if(data.error != null) {
+                        this.$.error.textContent = data.error;
+                        this.$.page.title = "";
+                        this.$.page.description = "";
+                    } else {
+                        let post = data.success;
+                        let d = new Date(post.date);
+                        post.date = d.toLocaleDateString();
+                        this.is_loaded = true;
+                        this.post = post;
+                    }
+                };
+            })(document.querySelector("template[is=dom-bind]"));
+        </script>
+    </body>
+</html>

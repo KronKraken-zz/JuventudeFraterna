@@ -7,7 +7,7 @@ class Post {
 
     static getByID(i) {
         return new Promise((pRes, pRej) => {
-            Database.query("SELECT * FROM posts WHERE id=?", [i], (data) => {
+            Database.query("SELECT * FROM posts WHERE id=?", [i]).then((data) => {
                 if(data == null) {
                     pRes(null);
                 } else {
@@ -72,10 +72,6 @@ class Post {
 
     getDate() {
         return new Date(Number(this._data.date));
-    }
-
-    getImage() {
-        return this._data.image;
     }
 
 }

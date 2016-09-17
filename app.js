@@ -69,6 +69,10 @@ app.use("/assets", Express.static(Path.resolve(__dirname + "/assets")));
 new LoginRouter().register(app);
 new MainRouter().register(app);
 
+app.use("*", (req, res) => {
+    res.redirect("http://192.168.1.34:2000/404");
+});
+
 Database.connect({
     host: "localhost",
     port: 3306,

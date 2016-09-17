@@ -37,6 +37,7 @@ app.use(Cookies());
 
 app.use((req, res, next) => {
     res.error = (msg) => {
+        if(typeof msg != "string") {msg = msg.toString();}
         res.json({error: msg});
     };
 

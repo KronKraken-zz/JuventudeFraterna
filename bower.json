@@ -19,6 +19,7 @@
     "paper-elements": "PolymerElements/paper-elements#^1.0.7",
     "polymer": "Polymer/polymer#^1.6.1",
     "app-layout": "PolymerElements/app-layout#^0.10.4",
-    "neon-elements": "PolymerElements/neon-elements#^1.0.0"
+    "neon-elements": "PolymerElements/neon-elements#^1.0.0",
+    "marked-element": "PolymerElements/marked-element#^1.2.0"
   }
 }
