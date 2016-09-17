@@ -48,7 +48,7 @@ app.use("*", (req, res) => {
 });
 
 // Express paths
-Database.connect(JSON.parse(FS.readFileSync("db.json"))).then((err) => {
+Database.connect(JSON.parse(FS.readFileSync(__dirname + "/db.json"))).then((err) => {
     if(err) {
         console.log(err.code);
         process.exit(-1);
