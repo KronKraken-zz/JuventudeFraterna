@@ -56,17 +56,15 @@ app.use("*", (req, res) => {
 
 // Express paths
 Database.connect({
-    host: "localhost",
+    host: "127.0.0.1",
     port: 3306,
     user: "root",
     password: "",
-    database: "demolay"
+    database: "krakenbase"
 }).then((err) => {
     if(err) {
         console.log(err.code);
         process.exit(-1);
-    } else {
-        app.listen(2001, "192.168.1.34");
     }
 });
-//module.exports = app;
+module.exports = app;

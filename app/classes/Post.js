@@ -7,7 +7,7 @@ class Post {
 
     static getByID(i) {
         return new Promise((pRes, pRej) => {
-            Database.query("SELECT * FROM posts WHERE id=?", [i]).then((data) => {
+            Database.query("SELECT * FROM dm_posts WHERE id=?", [i]).then((data) => {
                 if(data == null) {
                     pRes(null);
                 } else {
@@ -19,7 +19,7 @@ class Post {
 
     static getFromTo(a, b) {
         return new Promise((pRes, pRej) => {
-            Database.query("SELECT * FROM posts WHERE id>=? AND id<=?", [a, b]).then((data) => {
+            Database.query("SELECT * FROM dm_posts WHERE id>=? AND id<=?", [a, b]).then((data) => {
                 if(data == null) {
                     pRes(null);
                 } else {

@@ -10,7 +10,7 @@ class MainRouter extends Router {
         super("/blog");
 
         this.router.get("/posts", (req, res) => {
-            Database.query("SELECT COUNT(*) FROM posts", []).then((data) => {
+            Database.query("SELECT COUNT(*) FROM dm_posts", []).then((data) => {
                 res.success(data[0]["COUNT(*)"]);
             }).catch(res.error);
         });

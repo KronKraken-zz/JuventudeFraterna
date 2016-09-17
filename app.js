@@ -70,21 +70,19 @@ new LoginRouter().register(app);
 new MainRouter().register(app);
 
 app.use("*", (req, res) => {
-    res.redirect("http://192.168.1.34:2000/404");
+    res.redirect("https://kronkraken.net/demolay/404");
 });
 
 Database.connect({
-    host: "localhost",
+    host: "127.0.0.1",
     port: 3306,
     user: "root",
     password: "",
-    database: "demolay"
+    database: "krakenbase"
 }).then((err) => {
     if(err) {
         console.log(err.code);
         process.exit(-1);
-    } else {
-        app.listen(2000, "192.168.1.34");
     }
 });
-//module.exports = app;
+module.exports = app;

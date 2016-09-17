@@ -14,7 +14,7 @@ class User {
     static login(id, password) {
         let encrypted_password = Crypto.createHash("sha256").update(password).digest("hex");
         return new Promise((pRes, pRej) => {
-            Database.query("SELECT * FROM users WHERE id=? AND password=?;", [id, encrypted_password]).then((users) => {
+            Database.query("SELECT * FROM dm_users WHERE id=? AND password=?;", [id, encrypted_password]).then((users) => {
                 if(users == null) {
                     Request.post("https://sis.demolaybrasil.org.br/incs/login.php", {headers: {"Content-Type": "application/x-www-form-urlencoded"}, body: "login=" + id + "&senha=" + password}, (err, res, body) => {
                         if(err || !body || body.indexOf("estatus") == -1) {
@@ -33,7 +33,7 @@ class User {
                                         let name = $[0].children[1].children[0].children[8].children[1].children[1].children[0].content;
                                         let pic = "https://sis.demolaybrasil.org.br/" + $[0].children[1].children[0].children[4].children[0].attr.src;
                                         let user = new User({name: name, id: id, pic: pic, login_date: new Date(), permission: 0});
-                                        Database.query("INSERT INTO users VALUES (?,?,?,?,?)", [id, name, 0, encrypted_password, pic]);
+                                        Database.query("INSERT INTO dm_users VALUES (?,?,?,?,?)", [id, name, 0, encrypted_password, pic]);
                                         pRes(user);
                                     }
                                 });
@@ -55,7 +55,7 @@ class User {
             if(global.user_cache[id] != null) {
                 pRes(global.user_cache[id]);
             } else {
-                Database.query("SELECT * FROM users WHERE id=?", [id]).then((data) => {
+                Database.query("SELECT * FROM dm_users WHERE id=?", [id]).then((data) => {
                     if(data == null) {
                         pRes(null);
                     } else {
