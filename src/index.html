@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+        <meta name="viewport" content="width=device-width, user-scalable=no">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
@@ -20,11 +20,16 @@
         <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
         <link rel="import" href="../bower_components/neon-animation/animations/scale-up-animation.html">
         <link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+        <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+        <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+        <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 
         <style is="custom-style">
             body {
                 padding: 0;
                 margin: 0;
+                min-width: 360px;
+                overflow-x: hidden;
             }
 
             h1 {
@@ -43,63 +48,96 @@
         </style>
         <style is="custom-style">
             paper-card.blog-post {
+                @apply(--layout-horizontal);
                 width: 100%;
-                --paper-card-content: {
-                    @apply(--paper-font-subhead);
-                    padding-top: 4px;
-                }
+            }
 
-                --paper-card-header-text: {
-                    padding: 16px 16px 4px 16px;
-                }
-
-                --paper-card-actions: {
-                    padding: 5px;
+            @media(min-width: 600px) {
+                .blog-post .image {
+                    width: 150px;
+                    height: auto;
+                    background: url('https://bodegadahistoria.files.wordpress.com/2012/07/brasao-demolay1.jpg');
+                    background-position: center;
+                    background-size: contain;
+                    background-repeat: no-repeat;
                 }
             }
 
-            paper-dialog.blog-post-content {
-                width: 90%;
-                height: auto;
-            }
-
-            paper-card.blog-post paper-button {
-                margin: 0 0 5px 0;
+            .blog-post .content {
+                @apply(--layout-flex);
                 float: right;
-                @apply(--paper-font-body1);
+            }
+
+            .blog-post .title {
+                @apply(--paper-font-headline);
+            }
+
+            .no-posts {
+                text-align: center;
+                color: #ddd;
+            }
+
+            .no-posts h1 {
+                margin: 0 0 20px 0;
+                font-size: 3rem;
+                font-weight: 900;
+            }
+
+            .no-posts iron-icon {
+                width: 15rem;
+                height: 15rem;
             }
         </style>
     </head>
     <body>
         <template is="dom-bind">
             <jf-page title="Blog" description="As ultimas notícias de nosso Capítulo!">
-                <template is="dom-repeat" items='[{"title": "Post 01", "description": "Post 01 Description", "content": "Post 01 Content"}, {"title": "Post 01", "description": "Post 01 Description", "content": "Post 01 Content"}, {"title": "Post 01", "description": "Post 01 Description", "content": "Post 01 Content"}, {"title": "Post 01", "description": "Post 01 Description", "content": "Post 01 Content"}, {"title": "Post 01", "description": "Post 01 Description", "content": "Post 01 Content"}]'>
-                    <paper-card heading="{{item.title}}" elevation="2" class="blog-post">
-                        <div class="card-content">
-                            {{item.description}}
+                <div hidden="{{!no_posts}}" class="no-posts">
+                    <br>
+                    <iron-icon icon="clear"></iron-icon>
+                    <h1 id="error">Parece que não tem nada aqui!</h1>
+                    <br>
+                </div>
+                <template is="dom-repeat" id="posts_renderer" items="[]" hidden="{{no_posts}}">
+                    <paper-card class="blog-post">
+                        <div class="content">
+                            <div class="card-content">
+                                <div class="title">{{item.title}}</div>
+                                <div>{{item.description}}</div>
+                            </div>
+                            <div class="card-actions">
+                                <a href$="http://192.168.1.34/posts/"><paper-button>Ler mais...</paper-button></a>
+                            </div>
                         </div>
-                        <div class="card-actions">
-                            <paper-button onclick$="document.querySelector('#post_content_{{item.pid}}').open();">Ler mais...</paper-button>
-                        </div>
+                        <div class="image"></div>
                     </paper-card>
-
-                    <paper-dialog id$="post_content_{{item.pid}}" modal entry-animation="scale-up-animation" exit-animation="fade-out-animation" class="blog-post-content">
-                        <h2>{{item.title}}</h2>
-                        <paper-dialog-scrollable>
-                            {{item.content}}
-                        </paper-dialog-scrollable>
-                        <div class="buttons">
-                            <paper-button dialog-dismiss>Fechar</paper-button>
-                        </div>
-                    </paper-dialog>
-
                     <br><br>
                 </template>
             </jf-page>
+            <iron-ajax auto id="ajax" url="http://192.168.1.34:2001/blog/posts/{{load_after}}" handle-as="json" on-response="loaded"></iron-ajax>
         </template>
         <script type="text/javascript">
             (function($) {
+                $.ready = function() {
+                    this.no_posts = false;
+                    this.load_after = 0;
+                };
 
+                $.load = function() {
+                    this.load_after += 5;
+                    this.$.ajax.generateRequest();
+                };
+
+                $.loaded = function(data) {
+                    data = data.detail.response;
+                    if(data.error != null) {
+                        this.no_posts = true;
+                        this.$.error = data.error;
+                    } else {
+                        this.no_posts = false;
+                        this.$.posts_renderer.items = this.$.posts_renderer.items.concat(data.success.posts);
+                    }
+                };
             })(document.querySelector("template[is=dom-bind]"));
         </script>
     </body>
