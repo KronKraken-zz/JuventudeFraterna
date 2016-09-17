@@ -14,14 +14,11 @@ global.load = (p) => {
 
 // Node Natives
 let Path = load("#path");
+let FS = load("#fs");
 
 // Installed
 let Express = load("#express");
 let Hogan = load("#hogan-cached");
-
-let Cors = require("cors");
-let Cookies = load("#cookie-parser");
-let BodyParser = load("#body-parser");
 
 // Local
 let User = load("app.classes.User");
@@ -37,14 +34,9 @@ let app = new Express();
 
 // Express Config
 app.engine("html", Hogan);
-app.set("hogan cache", false); // Remove before production
 app.set("hogan options", {delimiters: "{?-- --?}"});
 app.set("view engine", "html");
 app.set("views", Path.resolve(__dirname + "/out"));
-
-app.use(Cors());
-app.use(BodyParser.json());
-app.use(Cookies());
 
 // Sessions
 app.use((req, res, next) => {
@@ -73,13 +65,7 @@ app.use("*", (req, res) => {
     res.redirect("https://kronkraken.net/demolay/404");
 });
 
-Database.connect({
-    host: "127.0.0.1",
-    port: 3306,
-    user: "root",
-    password: "",
-    database: "krakenbase"
-}).then((err) => {
+Database.connect(JSON.parse(FS.readFileSync("db.json"))).then((err) => {
     if(err) {
         console.log(err.code);
         process.exit(-1);

@@ -14,13 +14,10 @@ global.load = (p) => {
 
 // Node Natives
 let Path = load("#path");
+let FS = load("#fs");
 
 // Installed
 let Express = load("#express");
-
-let Cors = require("cors");
-let Cookies = load("#cookie-parser");
-let BodyParser = load("#body-parser");
 
 // Local
 let Database = load("app.managers.Database");
@@ -30,10 +27,6 @@ let BlogRouter = load("app.routers.api.BlogRouter");
 
 // Variables
 let app = new Express();
-
-app.use(Cors());
-app.use(BodyParser.json());
-app.use(Cookies());
 
 app.use((req, res, next) => {
     res.error = (msg) => {
@@ -55,13 +48,7 @@ app.use("*", (req, res) => {
 });
 
 // Express paths
-Database.connect({
-    host: "127.0.0.1",
-    port: 3306,
-    user: "root",
-    password: "",
-    database: "krakenbase"
-}).then((err) => {
+Database.connect(JSON.parse(FS.readFileSync("db.json"))).then((err) => {
     if(err) {
         console.log(err.code);
         process.exit(-1);
