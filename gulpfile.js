@@ -21,8 +21,8 @@ let HTMLMin = require("gulp-htmlmin");
 
 Gulp.task("html", () => {
     return Gulp.src(paths.html.in)
-        //.pipe(Changed(paths.html.out))
-        //.pipe(Cached("html"))
+        .pipe(Changed(paths.html.out))
+        .pipe(Cached("html"))
         .pipe(Vulcanize({
             inlineCss: true,
             inlineScripts: true,
@@ -34,7 +34,7 @@ Gulp.task("html", () => {
             minifyJS: true,
             collapseWhitespace: true
         }))
-        //.pipe(Remember("html"))
+        .pipe(Remember("html"))
         .pipe(Gulp.dest(paths.html.out));
 });
 
