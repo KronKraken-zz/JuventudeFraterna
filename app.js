@@ -32,7 +32,7 @@ let LoginRouter = load("app.routers.LoginRouter");
 // Variables
 let app = new Express();
 
-global.config = JSON.parse(FS.readFileSync("config.json"));
+global.config = JSON.parse(FS.readFileSync(__dirname + "/config.json"));
 
 // Express Config
 app.engine("html", Hogan);

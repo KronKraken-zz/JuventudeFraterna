@@ -28,7 +28,7 @@ let BlogRouter = load("app.routers.api.BlogRouter");
 // Variables
 let app = new Express();
 
-global.config = JSON.parse(FS.readFileSync("config.json"));
+global.config = JSON.parse(FS.readFileSync(__dirname + "/config.json"));
 
 app.use((req, res, next) => {
     res.error = (msg) => {
