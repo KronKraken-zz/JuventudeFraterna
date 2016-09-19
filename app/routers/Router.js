@@ -30,6 +30,8 @@ class Router {
                 } else {
                     vars.user = null;
                 }
+
+                vars.config = global.config.hogan;
                 res.render(page, vars);
             });
         };

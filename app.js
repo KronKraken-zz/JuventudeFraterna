@@ -32,6 +32,8 @@ let LoginRouter = load("app.routers.LoginRouter");
 // Variables
 let app = new Express();
 
+global.config = JSON.parse(FS.readFileSync("config.json"));
+
 // Express Config
 app.engine("html", Hogan);
 app.set("hogan options", {delimiters: "{?-- --?}"});
@@ -62,13 +64,15 @@ new LoginRouter().register(app);
 new MainRouter().register(app);
 
 app.use("*", (req, res) => {
-    res.redirect("https://kronkraken.net/demolay/404");
+    res.redirect(global.config.not_found);
 });
 
-Database.connect(JSON.parse(FS.readFileSync(__dirname + "/db.json"))).then((err) => {
+Database.connect(global.config.database).then((err) => {
     if(err) {
         console.log(err.code);
         process.exit(-1);
+    } else if(global.config.local) {
+        app.listen(2000, "192.168.1.37");
     }
 });
 module.exports = app;

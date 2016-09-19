@@ -96,7 +96,7 @@
                     </marked-element>
                 </div>
             </jf-page>
-            <iron-ajax auto id="ajax" url="https://api.kronkraken.net/demolay/blog/post/{?--id--?}" handle-as="json" on-response="loaded"></iron-ajax>
+            <iron-ajax auto id="ajax" url="{?--config.blog.post_content--?}{?--id--?}" handle-as="json" on-response="loaded"></iron-ajax>
         </template>
         <script type="text/javascript">
             (function($) {

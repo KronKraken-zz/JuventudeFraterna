@@ -128,15 +128,15 @@
                                 <div>{{item.description}}<span class="date" hidden="{{small}}">{{item.date}}</span></div>
                             </div>
                             <div class="card-actions">
-                                <a href$="https://kronkraken.net/demolay/post/{{item.id}}"><paper-button>Ler mais...</paper-button></a>
+                                <a href$="{?--config.blog.post--?}"><paper-button>Ler mais...</paper-button></a>
                             </div>
                         </div>
-                        <div class="image" style$="background-image: url('https://kronkraken.net/assets/img/post/{{item.id}}.png');"></div>
+                        <div class="image" style$="background-image: url('{?--config.blog.post_image--?}');"></div>
                     </paper-card>
                     <br><br>
                 </template>
             </jf-page>
-            <iron-ajax auto id="ajax" url="https://api.kronkraken.net/demolay/blog/posts/{{load_after}}" handle-as="json" on-response="loaded"></iron-ajax>
+            <iron-ajax auto id="ajax" url="{?--config.blog.posts--?}" handle-as="json" on-response="loaded"></iron-ajax>
         </template>
         <script type="text/javascript">
             (function($) {

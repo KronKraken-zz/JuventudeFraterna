@@ -28,6 +28,8 @@ let BlogRouter = load("app.routers.api.BlogRouter");
 // Variables
 let app = new Express();
 
+global.config = JSON.parse(FS.readFileSync("config.json"));
+
 app.use((req, res, next) => {
     res.error = (msg) => {
         if(typeof msg != "string") {msg = msg.toString();}
@@ -48,10 +50,13 @@ app.use("*", (req, res) => {
 });
 
 // Express paths
-Database.connect(JSON.parse(FS.readFileSync(__dirname + "/db.json"))).then((err) => {
+Database.connect(global.config.database).then((err) => {
     if(err) {
         console.log(err.code);
         process.exit(-1);
+    } else if(global.config.local) {
+        app.listen(2000, "192.168.1.37");
     }
 });
+
 module.exports = app;
